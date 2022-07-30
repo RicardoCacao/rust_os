@@ -32,7 +32,7 @@ pub extern "C" fn _start() -> ! {
     .unwrap();
     println!();
     println!("Hello World{}", "!");
-
+    panic!("Some panic message");
     loop {}
 }
 
