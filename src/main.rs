@@ -1,5 +1,9 @@
 #![no_std] // don't link the Rust standard library
 #![no_main] // disable all Rust-level entry points
+#![feature(custom_test_frameworks)]
+#![test_runner(crate::test_runner)]
+#![reexport_test_harness_main = "test_main"]
+
 use core::panic::PanicInfo;
 
 mod vga_buffer;
@@ -7,33 +11,13 @@ mod vga_buffer;
 
 #[no_mangle] // don't mangle the name of this function
 pub extern "C" fn _start() -> ! {
-    /*    let vga_buffer = 0xb8000 as *mut u8;
-
-        for (i, &byte) in HELLO.iter().enumerate() {
-            unsafe {
-                *vga_buffer.offset(i as isize * 2) = byte;
-                *vga_buffer.offset(i as isize * 2 + 1) = 0xb;
-            }
-        }
-    */
-    // this function is the entry point, since the linker looks for a function
-    // name '_start' by default
-    //vga_buffer::print_something();
-
-    use core::fmt::Write;
-
-    vga_buffer::WRITER.lock().write_str("Hello again").unwrap();
-    write!(
-        vga_buffer::WRITER.lock(),
-        ", some numbers: {} {}",
-        42,
-        1.337
-    )
-    .unwrap();
-    println!();
     println!("Hello World{}", "!");
     panic!("Some panic message");
-    loop {}
+    
+    #[cfg(test)]
+    test_main();
+
+    //loop {}
 }
 
 /// This function is called on panic
@@ -41,4 +25,12 @@ pub extern "C" fn _start() -> ! {
 fn panic(info: &PanicInfo) -> ! {
     println!("{}", info);
     loop {}
+}
+
+#[cfg(test)]
+fn test_runner(tests: &[&dyn Fn()]) {
+    println!("Running {} tests", tests.len());
+    for test in tests {
+        test();
+    }
 }
