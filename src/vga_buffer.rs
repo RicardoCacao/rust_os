@@ -98,5 +98,5 @@ pub fn print_something() {
     };
     writer.write_byte(b'H');
     writer.write_string("ello ");
-    writer.write_string("Wörld");
+    writer.write_string("World");
 }
