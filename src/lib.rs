@@ -44,8 +44,7 @@ pub fn test_runner(tests: &[&dyn Testable]) {
 
 /// Entry point for `cargo test`
 #[cfg(test)]
-#[no_mangle]
-pub extern "C" fn _start(_boot_info: &'static BootInfo) -> ! {
+pub fn test_kernel_main(_boot_info: &'static BootInfo) -> ! {
     init();
     test_main();
     hlt_loop();
